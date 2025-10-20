@@ -1,59 +1,764 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>SHADOW - Siegfried 2005</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    /* Style SHADOW */
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHADOW STREAM - Le Futur du Streaming</title>
+    <!-- Chargement de Tailwind CSS pour un design moderne et responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Utilisation de la police Inter pour un look propre et lisible -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        /* Configuration Tailwind */
+        :root {
+            --red-shadow: 255 0 0;
+            --main-red: #e30000; /* Ton rouge SHADOW STREAM */
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d; /* Fond très dark */
+            color: #e5e5e5;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative; 
+            z-index: 1;
+        }
 
-    h1 {
-      font-size: 3em;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 5px #000;
-      letter-spacing: 2px;
-    }
+        /* ------------------ FONDS D'ÉCRAN RESPONSIVES ------------------ */
 
-    .video-container {
-      width: 90%;
-      max-width: 800px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
-      overflow: hidden;
-    }
+        /* Utilisation d'un pseudo-élément pour le fond, derrière le contenu */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Fond par défaut (Mobile) */
+            background-image: url('https://media.livewallpapers.com/images/high/neon-triangles-tech-wallpaper.webp'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.15; /* Subtilité premium */
+            z-index: -1; /* Toujours en arrière-plan */
+            transition: opacity 1s ease;
+        }
 
-    iframe {
-      width: 100%;
-      height: 450px;
-      border: none;
-    }
+        /* Grand Écran (Desktop, Tablette large) */
+        @media (min-width: 768px) {
+            body::before {
+                background-image: url('https://wallpapers.com/images/hd/4k-streaming-5333-x-3000-wallpaper-op1u6hm8jqcohaz2.jpg');
+            }
+        }
 
-    footer {
-      margin-top: 30px;
-      font-size: 0.9em;
-      color: #888;
-    }
-  </style>
+
+        /* ------------------ LOADER STYLES ------------------ */
+
+        #loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0d0d0d;
+            z-index: 999; /* Z-index ajusté */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .pulse-loader {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(227, 0, 0, 0.2);
+            border-top-color: var(--main-red);
+            border-radius: 50%;
+            animation: pulse 1s infinite ease-in-out, spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(227, 0, 0, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(227, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(227, 0, 0, 0); }
+        }
+
+        /* ------------------ INTERFACE STYLES ------------------ */
+
+        /* Glass Effect and Shadow for the Header */
+        .glass-header {
+            background-color: rgba(13, 13, 13, 0.85); 
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(227, 0, 0, 0.3);
+        }
+
+        /* Glass Effect Liquide for the Modal */
+        .glass-modal-content {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 2px solid rgba(227, 0, 0, 0.6);
+            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
+            border-radius: 2rem;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            
+            /* S'assure que le contenu peut scroller si la modale est plus haute que la fenêtre */
+            max-height: 95vh;
+            overflow-y: auto; 
+        }
+        
+        /* FIX pour le centrage : permet au contenu interne de la modale de rester centré verticalement */
+        #video-modal {
+            align-items: center; /* Important pour le centrage vertical */
+        }
+        /* Fin du FIX Centrage */
+
+        /* Card Hover Effect */
+        .movie-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 50px rgba(var(--red-shadow), 0.6);
+        }
+
+        .movie-card {
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            border-radius: 1rem;
+        }
+
+        .custom-video-player video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 0.75rem;
+        }
+
+        /* Neumorphism/Inner Shadow for Video Container */
+        .video-container-wrap {
+            padding: 0.75rem;
+            background-color: #1a1a1a;
+            border-radius: 1rem;
+            box-shadow: inset 6px 6px 12px #0a0a0a,
+                        inset -6px -6px 12px #222222;
+        }
+
+        /* Contrôle Minimalist : Rendu invisible par défaut, visible au survol/pause */
+        #minimal-controls {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .custom-video-player:hover #minimal-controls {
+            opacity: 100;
+        }
+        .paused #minimal-controls { /* S'affiche quand la vidéo est en pause */
+            opacity: 100;
+        }
+
+        /* ------------------ SIDEBAR STYLES ------------------ */
+
+        #sidebar {
+            position: fixed;
+            top: 0;
+            right: 0; /* Vient de la droite */
+            width: 300px; /* Largeur fixe pour la fluidité */
+            max-width: 80%; /* S'adapte mieux aux petits écrans */
+            height: 100%;
+            background: linear-gradient(180deg, rgba(20, 20, 20, 0.98) 0%, rgba(30, 30, 30, 0.98) 100%);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+            z-index: 900; /* Sous le loader, au-dessus du contenu */
+            transform: translateX(100%); /* Initialement caché à droite */
+            transition: transform 0.3s ease-in-out;
+            padding: 2rem 1.5rem;
+        }
+
+        #sidebar.is-open {
+            transform: translateX(0);
+        }
+
+        #sidebar-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 899;
+            transition: opacity 0.3s ease;
+        }
+
+        /* ------------------ SCROLL-TO-TOP BUTTON ------------------ */
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 40; /* Sous la modal (z-index 50) mais au-dessus du contenu */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+            border: 3px solid rgba(255, 255, 255, 0.5); /* Bords blancs pour le style */
+            box-shadow: 0 4px 15px rgba(var(--red-shadow), 0.5);
+        }
+
+        #scrollToTopBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 25px rgba(var(--red-shadow), 0.8);
+        }
+        
+        #scrollToTopBtn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* ------------------ SECURITY WARNING ------------------ */
+        #security-warning-modal {
+            z-index: 1000; /* Le plus haut pour garantir la visibilité */
+            /* Ajout de la transition pour la fluidité */
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0; /* Initialement masqué */
+            pointer-events: none;
+        }
+        
+        #security-warning-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Style pour la boîte d'avertissement */
+        .warning-box {
+            background-color: #8B0000; /* Rouge foncé */
+            transition: transform 0.3s ease-out;
+        }
+
+    </style>
 </head>
-<body>
-  <h1>SHADOW</h1>
-  <div class="video-container">
-    <iframe src="https://www.dailymotion.com/embed/video/x99u766" allowfullscreen allow="autoplay"></iframe>
-  </div>
-  <footer>
-    Film : Siegfried (2005) • Source : Dailymotion • Design by SHADOW
-  </footer>
+<!-- Suppression de l'attribut oncontextmenu pour gérer le blocage dans le JS -->
+<body id="main-body">
+
+    <!-- 0. LOADER OVERLAY (Chargement de 6 secondes) -->
+    <div id="loader-overlay" class="text-white">
+        <div class="pulse-loader mb-4"></div>
+        <p class="text-xl font-medium tracking-wider" style="color: var(--main-red);">
+            SHADOW STREAM
+        </p>
+        <p class="text-sm mt-2 text-gray-500">Chargement des données... Préparation pour la fluidité maximale.</p>
+    </div>
+
+
+    <!-- Wrapper pour le contenu principal à afficher après le loader -->
+    <div id="main-content-wrap" class="opacity-0 transition-opacity duration-500">
+        
+        <!-- 1. Header SHADOW STREAM (Glass Effect Liquide) -->
+        <header class="glass-header sticky top-0 z-50 p-3 sm:p-4">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <!-- Hamburger Button -->
+                <button onclick="openSidebar()" class="text-white hover:text-red-500 transition duration-300 p-2 rounded-lg focus:outline-none">
+                    <!-- Icone Hamburger SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+
+                <!-- Titre Centré et Adaptatif (Taille ajustée pour mobile) -->
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-center flex-grow" style="color: var(--main-red); text-shadow: 0 0 15px rgba(227, 0, 0, 0.8);">
+                    SHADOW STREAM
+                </h1>
+
+                <!-- Placeholder pour alignement (Invisible mais conserve l'espace) -->
+                <div class="h-8 w-8 p-2"></div>
+            </div>
+        </header>
+
+        <!-- 2. Main Content Grid -->
+        <main class="pt-12 pb-8 px-4 sm:px-8 max-w-7xl mx-auto">
+            <!-- Texte ajusté : "Films à l'affiche" devient "Films" -->
+            <h2 class="text-3xl font-bold mb-8 text-gray-200">Films</h2>
+
+            <div id="movie-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <!-- Movie cards will be injected here by JS -->
+            </div>
+        </main>
+    </div>
+    
+    <!-- 5. SCROLL-TO-TOP BUTTON -->
+    <button id="scrollToTopBtn" onclick="scrollToTop()" class="p-4 rounded-full bg-red-700 hover:bg-red-600 transition duration-300 focus:outline-none">
+        <!-- Flèche vers le haut SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+
+    <!-- 6. SECURITY WARNING MODAL (Flottant) -->
+    <div id="security-warning-modal" class="fixed inset-0 z-[1001] hidden items-center justify-center p-4">
+        <div class="warning-box border-4 border-red-500 text-white p-6 rounded-lg shadow-2xl text-center max-w-sm transform scale-100">
+            <p id="warning-message" class="text-xl font-bold mb-3"></p>
+            <p class="text-sm text-red-200">(Ceci est une mesure de sécurité. Veuillez respecter les règles du site.)</p>
+        </div>
+    </div>
+
+
+    <!-- 4. SIDEBAR MENU (Menu Latéral Coulissant) -->
+    <div id="sidebar" class="text-gray-200">
+        <div class="flex justify-between items-center mb-8">
+            <!-- Titre ajusté pour la sidebar (plus petit) -->
+            <h2 class="text-2xl font-extrabold" style="color: var(--main-red);">SHADOW STREAM</h2>
+            <button onclick="closeSidebar()" class="text-3xl font-light leading-none hover:text-red-500 focus:outline-none">
+                &times;
+            </button>
+        </div>
+
+        <p class="text-base mb-6 border-b border-red-700/50 pb-4 leading-relaxed">
+            Bienvenue sur SHADOW STREAM. Notre plateforme est toute nouvelle, entièrement dédiée à l'avenir du cinéma.
+        </p>
+
+        <p class="text-sm leading-relaxed text-gray-300">
+            Nous vous proposons exclusivement des films de **2025** et les prochaines sorties majeures. Notre catalogue ne reviendra pas sur les anciens titres ; chez SHADOW STREAM, seul l'avenir du streaming compte. Préparez-vous à la nouveauté.
+        </p>
+        
+        <div class="mt-8 pt-4 border-t border-gray-700/50">
+            <h3 class="font-semibold text-red-400 mb-2">Statut de la Plateforme</h3>
+            <!-- Version passée à Bêta -->
+            <p class="text-xs text-gray-500">Version: 1.0 (Bêta)</p>
+        </div>
+    </div>
+    <!-- Backdrop pour la sidebar, invisible tant que la sidebar est fermée -->
+    <div id="sidebar-backdrop" class="hidden opacity-0" onclick="closeSidebar()"></div>
+
+    <!-- 3. Modal Container (Hidden by Default) -->
+    <div id="video-modal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 transition-opacity duration-300 ease-in-out opacity-0" onclick="closeModal(event)">
+        
+        <!-- Modal Content (Parfaitement centré et fluide) -->
+        <div id="modal-content-area" class="glass-modal-content w-full max-w-4xl p-4 md:p-8 transform scale-95" onclick="event.stopPropagation()">
+            
+            <!-- Close Button (Super stylé) -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-3xl font-light leading-none transition-all duration-300 hover:text-red-500 text-gray-400 focus:outline-none z-10">
+                &times;
+            </button>
+
+            <!-- Movie Title -->
+            <h2 id="modal-title" class="text-2xl md:text-3xl font-extrabold mb-4" style="color: var(--main-red);"></h2>
+
+            <!-- Video Player (Lecteur Personnalisé Stylé) -->
+            <div class="video-container-wrap relative">
+                <div id="video-player-container" class="custom-video-player aspect-video relative group paused">
+                    <!-- controlsList="nodownload" et pas d'attribut 'controls' pour bloquer le téléchargement et utiliser les contrôles custom -->
+                    <video id="video-player" preload="metadata" poster="" class="w-full rounded-xl shadow-2xl bg-black" controlsList="nodownload">
+                        <!-- Source will be injectée ici -->
+                    </video>
+
+                    <!-- Custom Overlay/Controls (S'affiche si la vidéo est en pause ou au chargement) -->
+                    <div id="custom-controls-overlay" onclick="togglePlayPause(event)" class="absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-300 cursor-pointer">
+                        <button id="play-pause-button" class="bg-red-700 hover:bg-red-600 transition duration-150 p-5 rounded-full shadow-lg transform scale-100 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-red-500/50">
+                            <!-- Play Icon (SVG) -->
+                            <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6 4l15 8-15 8z"/>
+                            </svg>
+                             <!-- Pause Icon (SVG - hidden initially) -->
+                            <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white hidden" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Minimalist control bar at the bottom (Fullscreen only) -->
+                    <div id="minimal-controls" class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex justify-end items-center space-x-4">
+                        <button onclick="toggleFullscreen()" class="text-white hover:text-red-500 transition duration-150 p-1 rounded-lg focus:outline-none">
+                            <!-- Fullscreen Icon (SVG) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <p class="mt-4 text-xs text-gray-500 text-center">Design Premium. Expérience fluide garantie après le pré-chargement.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIQUE DE SÉCURITÉ ET D'EXPULSION (S'exécute en premier) ---
+        
+        // Clés Local Storage
+        const EXPULSION_KEY = 'shadowStreamExpulsion';
+        const WARNING_COUNT_KEY = 'shadowStreamWarnings';
+        const EXPULSION_DURATION_MS = 5 * 60 * 60 * 1000; // 5 heures en millisecondes
+        const MAX_WARNINGS = 1; // Expulsion à la deuxième tentative (compteur > 1)
+
+        const mainBody = document.getElementById('main-body');
+
+        /**
+         * Vérifie si l'utilisateur est banni et gère l'expulsion.
+         */
+        function checkExpulsionStatus() {
+            const expulsionTime = localStorage.getItem(EXPULSION_KEY);
+            const currentTime = Date.now();
+
+            if (expulsionTime && currentTime < parseInt(expulsionTime, 10)) {
+                // Utilisateur banni
+                const remainingTimeMs = parseInt(expulsionTime, 10) - currentTime;
+                // Calculer les heures restantes (arrondi au supérieur)
+                const remainingHours = Math.ceil(remainingTimeMs / (60 * 60 * 1000)); 
+
+                // Remplacer le contenu du corps par un message de blocage
+                mainBody.innerHTML = `
+                    <div class="h-screen flex flex-col items-center justify-center text-center p-8 bg-gray-900 text-white">
+                        <h1 class="text-4xl font-bold mb-4" style="color: var(--main-red);">ACCÈS BLOQUÉ</h1>
+                        <p class="text-xl mb-6">Vous avez été expulsé du site pour violation des règles de sécurité.</p>
+                        <p class="text-lg font-medium">Temps restant estimé: ${remainingHours} heure(s).</p>
+                        <p class="mt-8 text-sm text-gray-400">Redirection automatique vers Google...</p>
+                    </div>
+                `;
+                // Redirection fluide après un court délai
+                setTimeout(() => {
+                    window.location.replace("https://www.google.com");
+                }, 3000); 
+                
+                // Stopper l'exécution du script principal
+                throw new Error("Expulsion active, arrêt du script.");
+            }
+            // Si l'expulsion est terminée, réinitialiser le compteur de tentatives pour une nouvelle session
+            if (expulsionTime && currentTime >= parseInt(expulsionTime, 10)) {
+                 localStorage.removeItem(EXPULSION_KEY);
+                 localStorage.removeItem(WARNING_COUNT_KEY);
+            }
+        }
+        
+        // Exécuter immédiatement au début du script pour bloquer l'accès
+        checkExpulsionStatus(); 
+
+        // Reste des constantes et références DOM
+        const BASE_VIDEO_URL = "https://cinecake.xyz/movies/"; 
+        const movies = [
+            {
+                id: 1,
+                title: "A contre sens 3",
+                poster: "https://image.tmdb.org/t/p/original/iNncvRAgj8SQA25OhjNZeEElWCK.jpg",
+                video_path: "A-contre-sens-3.mp4"
+            },
+            {
+                id: 2,
+                title: "Evanouis",
+                poster: "https://image.tmdb.org/t/p/original/3eRJV97oZDY6LORwPNdWlfdPLnd.jpg",
+                video_path: "Evanouis.mp4"
+            },
+            {
+                id: 3,
+                title: "Superman",
+                poster: "https://image.tmdb.org/t/p/original/bL1U8TDb2ZiThIBFAdKHOfpv8lk.jpg",
+                video_path: "Superman-2025.mp4"
+            }
+        ];
+
+        const grid = document.getElementById('movie-grid');
+        const modal = document.getElementById('video-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const videoPlayer = document.getElementById('video-player');
+        const videoPlayerContainer = document.getElementById('video-player-container');
+        const modalContentArea = document.getElementById('modal-content-area');
+        const mainContentWrap = document.getElementById('main-content-wrap');
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn'); 
+        
+        const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+        
+        const loaderOverlay = document.getElementById('loader-overlay');
+        const controlsOverlay = document.getElementById('custom-controls-overlay');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        
+        // Nouvelles références pour la fenêtre d'avertissement de sécurité
+        const securityWarningModal = document.getElementById('security-warning-modal');
+        const warningMessage = document.getElementById('warning-message');
+
+        /**
+         * Affiche un avertissement de sécurité, incrémente le compteur et expulse si la limite est atteinte.
+         */
+        function triggerSecurityAction(type) {
+            let warningCount = parseInt(localStorage.getItem(WARNING_COUNT_KEY) || 0, 10);
+            warningCount++;
+            
+            // Logique d'EXPULSION
+            if (warningCount > MAX_WARNINGS) {
+                const expulsionTime = Date.now() + EXPULSION_DURATION_MS;
+                localStorage.setItem(EXPULSION_KEY, expulsionTime.toString());
+                localStorage.setItem(WARNING_COUNT_KEY, MAX_WARNINGS + 1);
+                
+                warningMessage.textContent = "EXPULSION! Vous êtes banni pour 5 heures.";
+                securityWarningModal.classList.add('active'); // Afficher la modale
+                securityWarningModal.style.display = 'flex';
+                
+                // Redirection après 3 secondes (temps pour lire le message)
+                setTimeout(() => {
+                    window.location.replace("https://www.google.com");
+                }, 3000); 
+                return;
+            }
+
+            // PREMIER AVERTISSEMENT
+            localStorage.setItem(WARNING_COUNT_KEY, warningCount.toString());
+
+            const action = type === 'keydown' ? 'raccourci clavier' : 'clic droit';
+            warningMessage.textContent = `AVERTISSEMENT #${warningCount}: Arrêtez d'utiliser le ${action} !`;
+            securityWarningModal.classList.add('active'); // Afficher la modale
+            securityWarningModal.style.display = 'flex';
+
+            // Masquer l'avertissement après 3 secondes
+            setTimeout(() => {
+                securityWarningModal.classList.remove('active');
+                // Masquer complètement après la transition de fade-out
+                setTimeout(() => {
+                    securityWarningModal.style.display = 'none';
+                }, 300); 
+            }, 3000);
+        }
+
+        // 1. Écouteur de clic droit (menu contextuel)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            triggerSecurityAction('contextmenu');
+            return false;
+        });
+
+        // 2. Écouteur de raccourcis clavier de sécurité
+        document.addEventListener('keydown', function(e) {
+            const key = e.key.toLowerCase();
+            const isDevTools = (e.key === 'F12' || e.keyCode === 123) || // F12
+                               (e.ctrlKey && e.shiftKey && key === 'i') || // Ctrl+Shift+I
+                               (e.metaKey && e.altKey && key === 'i'); // Cmd+Option+I (Mac)
+
+            const isViewSource = (e.ctrlKey && key === 'u') || (e.metaKey && key === 'u'); // Ctrl+U / Cmd+U
+
+            if (isDevTools || isViewSource) {
+                e.preventDefault();
+                triggerSecurityAction('keydown');
+                return false;
+            }
+        });
+
+
+        // --- SCROLL-TO-TOP FUNCTIONS ---
+
+        /**
+         * Fait défiler la page vers le haut de manière fluide.
+         */
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // Fluidité garantie
+            });
+        }
+        
+        /**
+         * Affiche ou masque le bouton "Retour en haut" basé sur la position de défilement.
+         */
+        function handleScroll() {
+            // Le bouton apparaît si on a défilé de plus de 400 pixels
+            if (window.scrollY > 400) {
+                scrollToTopBtn.classList.add('visible');
+            } else {
+                scrollToTopBtn.classList.remove('visible');
+            }
+        }
+        
+        // Attacher l'écouteur d'événement au défilement
+        window.addEventListener('scroll', handleScroll);
+
+
+        // --- SIDEBAR FUNCTIONS ---
+
+        function openSidebar() {
+            sidebar.classList.add('is-open');
+            sidebarBackdrop.classList.remove('hidden');
+            // Gérer la transition d'opacité du backdrop
+            setTimeout(() => sidebarBackdrop.classList.remove('opacity-0'), 10);
+            mainBody.style.overflow = 'hidden'; // Bloquer le scroll
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('is-open');
+            sidebarBackdrop.classList.add('opacity-0');
+            // Cacher le backdrop après la transition
+            setTimeout(() => {
+                sidebarBackdrop.classList.add('hidden');
+                // Restaurer le scroll seulement si la modal vidéo est fermée
+                if (modal.classList.contains('hidden')) {
+                    mainBody.style.overflow = '';
+                }
+            }, 300);
+        }
+
+        // --- MOVIE GRID FUNCTIONS ---
+
+        /**
+         * Renders all movie cards on the main page.
+         */
+        function renderMovieCards() {
+            grid.innerHTML = movies.map(movie => `
+                <div class="movie-card bg-gray-800/60 shadow-lg hover:shadow-red-900/50 p-3 rounded-2xl border border-transparent hover:border-red-600/50 transition-all duration-300" 
+                     data-id="${movie.id}" 
+                     onclick="showModal(${movie.id})">
+                    
+                    <!-- Poster Container (Responsive) -->
+                    <div class="aspect-[2/3] overflow-hidden rounded-xl">
+                        <img src="${movie.poster}" 
+                             alt="Affiche du film ${movie.title}" 
+                             onerror="this.onerror=null;this.src='https://placehold.co/400x600/1e1e1e/888?text=Affiche+Non+Trouvée'"
+                             class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                        >
+                    </div>
+                    
+                    <!-- Title -->
+                    <p class="text-center font-semibold text-base mt-3 truncate text-gray-100">${movie.title}</p>
+                    
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Displays the video modal with the selected movie.
+         * @param {number} movieId - The ID of the movie to play.
+         */
+        function showModal(movieId) {
+            const movie = movies.find(m => m.id === movieId);
+            if (!movie) return console.error('Movie not found:', movieId);
+            
+            // S'assurer que la sidebar est fermée avant d'ouvrir la modal
+            closeSidebar(); 
+
+            // 1. Populate Modal - Utilise BASE_VIDEO_URL et video_path
+            modalTitle.textContent = movie.title;
+            videoPlayer.src = BASE_VIDEO_URL + movie.video_path;
+            videoPlayer.poster = movie.poster;
+            videoPlayer.load(); 
+
+            // Initial state for custom controls (Paused)
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+            controlsOverlay.classList.remove('opacity-0');
+            videoPlayerContainer.classList.add('paused');
+
+            // 2. Display Modal (Super fluide transition)
+            modal.classList.remove('hidden');
+            mainBody.style.overflow = 'hidden'; // Lock scrolling
+            
+            // Trigger transition after class is removed
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContentArea.classList.remove('scale-95');
+            }, 10);
+        }
+
+        /**
+         * Closes the video modal and pauses the video.
+         * @param {Event} [event] - The click event (optional).
+         */
+        function closeModal(event) {
+            // Check if the click was on the backdrop, not the content area
+            if (event && event.target !== modal) return;
+            
+            // 1. Start Close Transition
+            modal.classList.add('opacity-0');
+            modalContentArea.classList.add('scale-95');
+
+            // 2. Pause Video
+            videoPlayer.pause();
+
+            // 3. Hide Modal after transition
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                // Restaurer le scroll seulement si la modal vidéo est fermée
+                if (modal.classList.contains('hidden') && !sidebar.classList.contains('is-open')) {
+                    mainBody.style.overflow = ''; 
+                }
+            }, 300); // Match CSS transition duration
+        }
+
+        /**
+         * Toggles between play and pause for the video player.
+         * @param {Event} event - The click event to stop propagation.
+         */
+        function togglePlayPause(event) {
+            // Stop click event from bubbling up and closing the modal
+            if (event) event.stopPropagation(); 
+            
+            if (videoPlayer.paused || videoPlayer.ended) {
+                videoPlayer.play();
+            } else {
+                videoPlayer.pause();
+            }
+        }
+
+        /**
+         * Toggles fullscreen mode for the video player container.
+         */
+        function toggleFullscreen() {
+            const playerContainer = videoPlayer.closest('.video-container-wrap');
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else if (playerContainer.requestFullscreen) {
+                playerContainer.requestFullscreen();
+            }
+        }
+
+        // --- Event Listeners pour les contrôles custom et la fluidité ---
+
+        // Mettre à jour les icônes quand la vidéo joue
+        videoPlayer.addEventListener('play', () => {
+            playIcon.classList.add('hidden');
+            pauseIcon.classList.remove('hidden');
+            controlsOverlay.classList.add('opacity-0'); // Hide play overlay
+            videoPlayerContainer.classList.remove('paused');
+        });
+
+        // Mettre à jour les icônes quand la vidéo est en pause ou finie
+        videoPlayer.addEventListener('pause', () => {
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+            controlsOverlay.classList.remove('opacity-0'); // Show play overlay
+            videoPlayerContainer.classList.add('paused');
+        });
+
+        videoPlayer.addEventListener('ended', () => {
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+            controlsOverlay.classList.remove('opacity-0');
+            videoPlayerContainer.classList.add('paused');
+        });
+        
+        // --- LOGIQUE DU LOADER (6 SECONDES) ---
+        window.addEventListener('load', () => {
+            
+            // Durée de pré-chargement (6 secondes)
+            const MIN_LOAD_TIME = 6000; 
+
+            // Rendre les cartes immédiatement pour le pré-chargement
+            renderMovieCards();
+            
+            // S'assurer que le contenu principal est visible après le délai
+            setTimeout(() => {
+                // 1. Cacher le loader de manière fluide
+                loaderOverlay.classList.add('opacity-0', 'pointer-events-none');
+                
+                // 2. Afficher le contenu principal
+                mainContentWrap.classList.remove('opacity-0');
+
+                // 3. Supprimer le loader (optionnel, après la transition de fade-out)
+                setTimeout(() => {
+                    loaderOverlay.classList.add('hidden');
+                }, 500); // 500ms pour correspondre à la transition CSS
+
+            }, MIN_LOAD_TIME);
+        });
+    </script>
+
 </body>
 </html>
