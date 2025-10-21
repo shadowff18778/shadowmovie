@@ -14,11 +14,12 @@
         :root {
             --red-shadow: 255 0 0;
             --main-red: #e30000; /* Ton rouge SHADOW STREAM */
+            --dark-bg: #0d0d0d;
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0d0d0d; /* Fond très dark */
+            background-color: var(--dark-bg); /* Fond très dark */
             color: #e5e5e5;
             min-height: 100vh;
             overflow-x: hidden;
@@ -27,8 +28,6 @@
         }
 
         /* ------------------ FONDS D'ÉCRAN RESPONSIVES ------------------ */
-
-        /* Utilisation d'un pseudo-élément pour le fond, derrière le contenu */
         body::before {
             content: "";
             position: fixed;
@@ -36,35 +35,33 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* Fond par défaut (Mobile) */
+            /* Image pour mobile/petits écrans */
             background-image: url('https://media.livewallpapers.com/images/high/neon-triangles-tech-wallpaper.webp'); 
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            opacity: 0.15; /* Subtilité premium */
-            z-index: -1; /* Toujours en arrière-plan */
+            opacity: 0.15; 
+            z-index: -1; 
             transition: opacity 1s ease;
         }
 
-        /* Grand Écran (Desktop, Tablette large) */
         @media (min-width: 768px) {
             body::before {
+                /* Image pour desktop/grands écrans */
                 background-image: url('https://wallpapers.com/images/hd/4k-streaming-5333-x-3000-wallpaper-op1u6hm8jqcohaz2.jpg');
             }
         }
 
-
         /* ------------------ LOADER STYLES ------------------ */
-
         #loader-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0d0d0d;
-            z-index: 999; /* Z-index ajusté */
+            background: var(--dark-bg);
+            z-index: 999; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -91,9 +88,7 @@
             100% { box-shadow: 0 0 0 0 rgba(227, 0, 0, 0); }
         }
 
-        /* ------------------ INTERFACE STYLES ------------------ */
-
-        /* Glass Effect and Shadow for the Header */
+        /* ------------------ HEADER OPTIMISÉ ------------------ */
         .glass-header {
             background-color: rgba(13, 13, 13, 0.85); 
             backdrop-filter: blur(20px) saturate(180%);
@@ -101,129 +96,188 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
             border-bottom: 1px solid rgba(227, 0, 0, 0.3);
         }
-
-        /* Glass Effect Liquide for the Modal */
-        .glass-modal-content {
-            background: linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(30, 30, 30, 0.9) 100%);
-            backdrop-filter: blur(40px) saturate(200%);
-            -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border: 2px solid rgba(227, 0, 0, 0.6);
-            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
-            border-radius: 2rem;
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-            
-            /* S'assure que le contenu peut scroller si la modale est plus haute que la fenêtre */
-            max-height: 95vh;
-            overflow-y: auto; 
-        }
         
-        /* FIX pour le centrage : permet au contenu interne de la modale de rester centré verticalement */
-        #video-modal {
-            align-items: center; /* Important pour le centrage vertical */
+        /* Ajustement de la taille du titre pour mobile */
+        #main-title {
+            font-size: 1.5rem; /* 24px par défaut sur mobile */
         }
-        /* Fin du FIX Centrage */
-
-        /* Card Hover Effect */
-        .movie-card:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 15px 50px rgba(var(--red-shadow), 0.6);
+        @media (min-width: 640px) {
+            #main-title {
+                font-size: 1.875rem; /* 30px sur sm+ */
+            }
         }
 
+        /* ------------------ CARD STYLES ------------------ */
         .movie-card {
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
             border-radius: 1rem;
         }
-
-        .custom-video-player video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 0.75rem;
+        .movie-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 50px rgba(var(--red-shadow), 0.6);
         }
 
-        /* Neumorphism/Inner Shadow for Video Container */
-        .video-container-wrap {
-            padding: 0.75rem;
-            background-color: #1a1a1a;
+        /* ------------------ LECTEUR VIDÉO ------------------ */
+        .video-player-wrap {
+            background-color: #000;
             border-radius: 1rem;
-            box-shadow: inset 6px 6px 12px #0a0a0a,
-                        inset -6px -6px 12px #222222;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            aspect-ratio: 16/9; 
+            border: 2px solid rgba(227, 0, 0, 0.2);
+        }
+        
+        #custom-play-button-overlay {
+            cursor: pointer;
+            transition: opacity 0.3s ease-in-out, background-color 0.3s ease;
+            outline: none;
+            border: none;
+        }
+        
+        #custom-play-button-overlay:hover {
+             background-color: rgba(0, 0, 0, 0.7);
         }
 
-        /* Contrôle Minimalist : Rendu invisible par défaut, visible au survol/pause */
-        #minimal-controls {
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+        .play-icon-container {
+            width: 80px; 
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--main-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(var(--red-shadow), 0.8), 0 0 5px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
         }
-        .custom-video-player:hover #minimal-controls {
-            opacity: 100;
-        }
-        .paused #minimal-controls { /* S'affiche quand la vidéo est en pause */
-            opacity: 100;
+        
+        .play-icon-container:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(var(--red-shadow), 1), 0 0 10px rgba(0, 0, 0, 0.7);
         }
 
-        /* ------------------ SIDEBAR STYLES ------------------ */
-
+        /* ------------------ SIDEBAR MENU PREMIUM ------------------ */
         #sidebar {
             position: fixed;
             top: 0;
-            right: 0; /* Vient de la droite */
-            width: 300px; /* Largeur fixe pour la fluidité */
-            max-width: 80%; /* S'adapte mieux aux petits écrans */
-            height: 100%;
-            background: linear-gradient(180deg, rgba(20, 20, 20, 0.98) 0%, rgba(30, 30, 30, 0.98) 100%);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
-            z-index: 900; /* Sous le loader, au-dessus du contenu */
-            transform: translateX(100%); /* Initialement caché à droite */
-            transition: transform 0.3s ease-in-out;
-            padding: 2rem 1.5rem;
+            right: 0;
+            width: 300px;
+            max-width: 80%;
+            height: 100vh;
+            padding: 2rem;
+            z-index: 1000; 
+            transform: translateX(100%); 
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: #1a1a1a;
+            box-shadow: -10px 0 50px rgba(var(--red-shadow), 0.2);
+            overflow-y: auto;
+            border-left: 3px solid var(--main-red);
         }
 
         #sidebar.is-open {
-            transform: translateX(0);
+            transform: translateX(0); 
         }
 
         #sidebar-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 899;
-            transition: opacity 0.3s ease;
-        }
-
-        /* ------------------ SCROLL-TO-TOP BUTTON ------------------ */
-        #scrollToTopBtn {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 40; /* Sous la modal (z-index 50) mais au-dessus du contenu */
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-            cursor: pointer;
-            border: 3px solid rgba(255, 255, 255, 0.5); /* Bords blancs pour le style */
-            box-shadow: 0 4px 15px rgba(var(--red-shadow), 0.5);
-        }
-
-        #scrollToTopBtn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 25px rgba(var(--red-shadow), 0.8);
-        }
-        
-        #scrollToTopBtn.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        /* ------------------ SECURITY WARNING ------------------ */
-        #security-warning-modal {
-            z-index: 1000; /* Le plus haut pour garantir la visibilité */
-            /* Ajout de la transition pour la fluidité */
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 990; 
             transition: opacity 0.3s ease-in-out;
-            opacity: 0; /* Initialement masqué */
+        }
+
+        /* ------------------ VUES PRINCIPALES (Fluidité) ------------------ */
+        .view {
+            /* Amélioration: Utilisation d'une courbe plus agréable pour les vues */
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .view-hidden {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+        
+        /* ------------------ NO-RESULTS STYLES ------------------ */
+        @keyframes pulse-once-red {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .no-results-icon {
+            color: var(--main-red);
+            animation: pulse-once-red 1.5s infinite;
+        }
+        
+        /* ------------------ SEARCH BAR STYLES (NOUVEAU) ------------------ */
+        #search-container {
+            /* Courbe optimisée pour la disparition fluide */
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-in-out;
+        }
+
+        /* ------------------ FLOATING SEARCH ICON STYLES (NOUVEAU) ------------------ */
+        #floating-search-icon {
+            position: fixed;
+            top: 15px; /* Aligné avec le header */
+            left: 70px; /* À côté du bouton Menu (Menu est 16px + padding) */
+            z-index: 45; /* En dessous du Header mais au-dessus du contenu */
+            opacity: 0;
+            transform: translateX(-50px);
+            /* Transition plus douce pour l'apparition */
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            background-color: rgba(13, 13, 13, 0.85); /* Fond pour le faire ressortir */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(227, 0, 0, 0.3);
+        }
+
+        #floating-search-icon.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        #floating-search-icon:hover {
+            background-color: rgba(13, 13, 13, 0.95); 
+        }
+        
+        @media (min-width: 640px) {
+            #floating-search-icon {
+                 top: 20px;
+                 left: 80px; 
+            }
+        }
+
+        /* ------------------ SECURITY WARNING & BAN STYLES ------------------ */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px) rotate(-1deg); }
+            20%, 40%, 60%, 80% { transform: translateX(10px) rotate(1deg); }
+        }
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes pulse-once {
+            0% { box-shadow: 0 0 0 0 rgba(227, 0, 0, 0.4); }
+            50% { box-shadow: 0 0 30px 10px rgba(227, 0, 0, 0.8); }
+            100% { box-shadow: 0 0 0 0 rgba(227, 0, 0, 0.4); }
+        }
+        .animate-pulse-once {
+            animation: pulse-once 3s infinite;
+        }
+
+        #security-warning-modal {
+            z-index: 1001; 
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0; 
             pointer-events: none;
         }
         
@@ -232,24 +286,100 @@
             pointer-events: auto;
         }
         
-        /* Style pour la boîte d'avertissement */
         .warning-box {
-            background-color: #8B0000; /* Rouge foncé */
-            transition: transform 0.3s ease-out;
+            background-color: #8B0000; 
+            border-color: #FF4500; 
+            transition: transform 0.3s ease-out, background-color 0.3s ease;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.7);
+        }
+        
+        /* Bouton Scroll Top */
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 30;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        #scrollToTopBtn.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ------------------ MODALE HORS LIGNE STYLER ------------------ */
+        #offline-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: none; /* Caché par défaut via JS */
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            pointer-events: none;
+        }
+
+        #offline-modal.active {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .offline-content {
+            background-color: #1c1917; /* Darker amber */
+            border: 4px solid var(--main-red);
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 50px rgba(var(--red-shadow), 0.7);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        #offline-modal.active .offline-content {
+            transform: scale(1);
+        }
+
+        .offline-icon {
+            color: var(--main-red);
+            animation: pulse-fade 2s infinite;
+        }
+
+        @keyframes pulse-fade {
+            0% { opacity: 0.5; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.5; transform: scale(0.95); }
         }
 
     </style>
 </head>
-<!-- Suppression de l'attribut oncontextmenu pour gérer le blocage dans le JS -->
 <body id="main-body">
 
-    <!-- 0. LOADER OVERLAY (Chargement de 6 secondes) -->
+    <!-- 0. LOADER OVERLAY (Chargement de 3 secondes) -->
     <div id="loader-overlay" class="text-white">
         <div class="pulse-loader mb-4"></div>
         <p class="text-xl font-medium tracking-wider" style="color: var(--main-red);">
             SHADOW STREAM
         </p>
-        <p class="text-sm mt-2 text-gray-500">Chargement des données... Préparation pour la fluidité maximale.</p>
+        <p class="text-sm mt-2 text-gray-500">Chargement des données... Fluidité maximale garantie.</p>
+    </div>
+
+    <!-- 7. MODALE HORS LIGNE (Fluidité assurée) -->
+    <div id="offline-modal" class="items-center justify-center">
+        <div class="offline-content text-center max-w-sm w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="offline-icon h-16 w-16 mx-auto mb-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-2h-2v2zm0-4h2V7h-2v6z"/>
+            </svg>
+            <h2 class="text-3xl font-extrabold text-white mb-2">CONNEXION PERDUE</h2>
+            <p class="text-lg text-red-300 mb-6">Veuillez vous reconnecter au réseau Internet.</p>
+            <div class="text-sm text-gray-400">
+                <p>Le streaming sera automatiquement relancé dès que la connexion reviendra.</p>
+                <p class="font-mono mt-1">Version 1.5.8.3 (Fluide)</p>
+            </div>
+        </div>
     </div>
 
 
@@ -259,36 +389,139 @@
         <!-- 1. Header SHADOW STREAM (Glass Effect Liquide) -->
         <header class="glass-header sticky top-0 z-50 p-3 sm:p-4">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <!-- Hamburger Button -->
-                <button onclick="openSidebar()" class="text-white hover:text-red-500 transition duration-300 p-2 rounded-lg focus:outline-none">
+                <!-- Bouton RETOUR (visible seulement sur la page de détail) -->
+                <button id="back-button" onclick="navigateTo('grid')" class="text-white hover:text-red-500 transition duration-300 p-2 rounded-lg focus:outline-none hidden">
+                    <!-- Flèche arrière SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 sm:h-8 sm:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </button>
+                <!-- Bouton MENU (visible seulement sur la grille principale) -->
+                <button id="menu-button" onclick="openSidebar()" class="text-white hover:text-red-500 transition duration-300 p-2 rounded-lg focus:outline-none">
                     <!-- Icone Hamburger SVG -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 sm:h-8 sm:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
                     </svg>
                 </button>
 
-                <!-- Titre Centré et Adaptatif (Taille ajustée pour mobile) -->
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-center flex-grow" style="color: var(--main-red); text-shadow: 0 0 15px rgba(227, 0, 0, 0.8);">
+                <!-- Titre Centré et Adaptatif -->
+                <h1 id="main-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-center flex-grow" style="color: var(--main-red); text-shadow: 0 0 15px rgba(227, 0, 0, 0.8);">
                     SHADOW STREAM
                 </h1>
 
                 <!-- Placeholder pour alignement (Invisible mais conserve l'espace) -->
-                <div class="h-8 w-8 p-2"></div>
+                <div class="h-6 w-6 sm:h-8 sm:w-8 p-2"></div>
             </div>
         </header>
+        
+        <!-- NOUVEAU: Icône de recherche flottante/compacte -->
+        <div id="floating-search-icon" class="text-red-400" onclick="focusSearchAndScroll()">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+             </svg>
+        </div>
 
-        <!-- 2. Main Content Grid -->
-        <main class="pt-12 pb-8 px-4 sm:px-8 max-w-7xl mx-auto">
-            <!-- Texte ajusté : "Films à l'affiche" devient "Films" -->
-            <h2 class="text-3xl font-bold mb-8 text-gray-200">Films</h2>
+        <main class="py-12 px-4 sm:px-8 max-w-7xl mx-auto relative min-h-[60vh]">
+            
+            <!-- 2. GRILLE PRINCIPALE (AFFICHE LA LISTE DE FILMS) -->
+            <div id="main-grid-view" class="view">
+                <h2 class="text-3xl font-bold mb-8 text-gray-200">Films Récents</h2>
+                
+                <!-- Barre de Recherche Stylée et Fluide -->
+                <div id="search-container" class="mb-8 relative">
+                    <input type="text" id="search-input" placeholder="Rechercher un titre..." 
+                           class="w-full p-4 pl-12 bg-gray-800/80 text-gray-200 border-2 border-red-700/50 rounded-xl shadow-lg focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition duration-300 placeholder-gray-400"
+                           oninput="handleSearch()">
+                    <!-- Icône de loupe dans le champ -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
 
-            <div id="movie-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                <!-- Movie cards will be injected here by JS -->
+                <!-- Message Aucun Résultat Stylé -->
+                <div id="no-results-message" class="text-center p-12 hidden rounded-xl bg-gray-900/70 border-2 border-red-700/50 shadow-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-red-500 no-results-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-3xl font-extrabold text-gray-200 mb-2">Flux non trouvé</p>
+                    <p class="text-xl text-red-400">Aucun résultat ne correspond à cette recherche. Essayez un autre titre SHADOW.</p>
+                </div>
+
+                <div id="movie-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    <!-- Movie cards will be injected here by JS -->
+                </div>
             </div>
+
+            <!-- 3. PAGE DÉTAIL FILM (OUVRE QUAND ON CLIQUE SUR UNE CARTE) -->
+            <div id="movie-detail-view" class="view view-hidden">
+                <div class="max-w-5xl mx-auto">
+                    
+                    <!-- Affiche du film et Badges -->
+                    <div class="flex flex-col md:flex-row gap-8 mb-10">
+                        <!-- Affiche (Poster) -->
+                        <div class="w-full md:w-1/3 flex-shrink-0">
+                            <img id="detail-poster" src="" alt="Affiche du film" class="w-full rounded-2xl shadow-2xl shadow-red-900/40">
+                        </div>
+
+                        <!-- Info et Lecteur -->
+                        <div class="w-full md:w-2/3">
+                            <h2 id="detail-title" class="text-4xl sm:text-5xl font-extrabold mb-4" style="color: var(--main-red);"></h2>
+                            
+                            <!-- Badges -->
+                            <div class="flex items-center space-x-3 mb-6">
+                                <span class="px-3 py-1 bg-red-700 text-white font-bold rounded-full text-sm shadow-lg">VF</span>
+                                <span class="px-3 py-1 bg-gray-600 text-green-300 font-bold rounded-full text-sm border border-green-300/50 shadow-lg">HD+</span>
+                            </div>
+
+                            <!-- Description -->
+                            <p id="detail-description" class="text-gray-400 mb-8 leading-relaxed">
+                                <!-- Description remplie par JS -->
+                            </p>
+
+                            <!-- Lecteur Vidéo Premium -->
+                            <div class="video-player-wrap relative">
+                                <!-- Message d'erreur non-destructif, masqué par défaut -->
+                                <div id="video-error-message" class="absolute inset-0 flex items-center justify-center bg-black/80 hidden z-10 rounded-xl">
+                                    <p class="text-xl font-bold text-red-500 p-4 rounded-lg bg-black/70 border border-red-700">
+                                        ERREUR DE CHARGEMENT VIDÉO. La source est inaccessible.
+                                    </p>
+                                </div>
+                                
+                                <!-- Overlay Play/Pause Personnalisé -->
+                                <button id="custom-play-button-overlay" 
+                                    class="absolute inset-0 flex items-center justify-center bg-black/50 transition-opacity duration-300 z-10" 
+                                    onclick="toggleVideoPlayPause()">
+                                    <div class="play-icon-container">
+                                        <!-- Icône Play/Pause (Triangle de Shadow Stream) -->
+                                        <svg id="play-pause-icon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                            <!-- Icone Play (Triangle standard) -->
+                                            <path d="M6 4l15 8-15 8z"/>
+                                        </svg>
+                                    </div>
+                                </button>
+
+                                <!-- Lecteur Vidéo Natif (SANS MUTED pour le son !) -->
+                                <video id="video-player" 
+                                    preload="auto" 
+                                    class="w-full h-full" 
+                                    controls 
+                                    controlsList="nodownload" 
+                                    autoplay 
+                                >
+                                    <!-- Source will be injected here -->
+                                </video>
+                            </div>
+
+                            <p class="mt-4 text-xs text-gray-500 text-center">Lecteur Premium - Fluidité maximale.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </main>
     </div>
     
-    <!-- 5. SCROLL-TO-TOP BUTTON -->
+    <!-- 5. SCROLL-TO-TOP BUTTON (Utilisé ici comme fallback si l'utilisateur scroll au lieu de cliquer sur l'icône flottante) -->
     <button id="scrollToTopBtn" onclick="scrollToTop()" class="p-4 rounded-full bg-red-700 hover:bg-red-600 transition duration-300 focus:outline-none">
         <!-- Flèche vers le haut SVG -->
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -298,91 +531,49 @@
 
     <!-- 6. SECURITY WARNING MODAL (Flottant) -->
     <div id="security-warning-modal" class="fixed inset-0 z-[1001] hidden items-center justify-center p-4">
-        <div class="warning-box border-4 border-red-500 text-white p-6 rounded-lg shadow-2xl text-center max-w-sm transform scale-100">
+        <div class="warning-box border-4 border-red-500 text-white shadow-2xl text-center max-w-sm w-full transform scale-100">
             <p id="warning-message" class="text-xl font-bold mb-3"></p>
-            <p class="text-sm text-red-200">(Ceci est une mesure de sécurité. Veuillez respecter les règles du site.)</p>
+            <p class="text-sm text-red-200">(Arrêtez d'utiliser les outils de débogage ou vous serez expulsé du site.)</p>
         </div>
     </div>
 
 
-    <!-- 4. SIDEBAR MENU (Menu Latéral Coulissant) -->
+    <!-- 4. SIDEBAR MENU (Menu Latéral Coulissant) - PREMIUM LOOK -->
     <div id="sidebar" class="text-gray-200">
-        <div class="flex justify-between items-center mb-8">
-            <!-- Titre ajusté pour la sidebar (plus petit) -->
-            <h2 class="text-2xl font-extrabold" style="color: var(--main-red);">SHADOW STREAM</h2>
-            <button onclick="closeSidebar()" class="text-3xl font-light leading-none hover:text-red-500 focus:outline-none">
+        <div class="flex justify-between items-center pb-6 mb-6 border-b border-red-700/50">
+            <h2 class="text-3xl font-extrabold tracking-widest" style="color: var(--main-red); text-shadow: 0 0 8px rgba(227, 0, 0, 0.5);">
+                SHADOW
+            </h2>
+            <button onclick="closeSidebar()" class="text-4xl font-light leading-none hover:text-red-500 focus:outline-none">
                 &times;
             </button>
         </div>
 
-        <p class="text-base mb-6 border-b border-red-700/50 pb-4 leading-relaxed">
-            Bienvenue sur SHADOW STREAM. Notre plateforme est toute nouvelle, entièrement dédiée à l'avenir du cinéma.
-        </p>
-
-        <p class="text-sm leading-relaxed text-gray-300">
-            Nous vous proposons exclusivement des films de **2025** et les prochaines sorties majeures. Notre catalogue ne reviendra pas sur les anciens titres ; chez SHADOW STREAM, seul l'avenir du streaming compte. Préparez-vous à la nouveauté.
-        </p>
+        <div class="space-y-6">
+            <div class="p-4 bg-gray-900/50 rounded-lg border border-red-700/30 shadow-xl">
+                <h3 class="text-xl font-bold mb-2 text-red-400">À Propos</h3>
+                <p class="text-sm leading-relaxed text-gray-300">
+                    Bienvenue sur SHADOW STREAM. Notre plateforme est toute nouvelle, dédiée exclusivement à l'avenir du cinéma (titres 2025 et plus). Seule l'innovation compte ici.
+                </p>
+            </div>
+            
+            <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-600/30">
+                <h3 class="text-xl font-bold mb-2 text-gray-300">Sécurité et Flux</h3>
+                <p class="text-sm leading-relaxed text-gray-400">
+                    Notre protocole assure une fluidité maximale et une sécurité sans compromis. Toute tentative d'inspection ou de capture est immédiatement détectée.
+                </p>
+            </div>
+        </div>
         
-        <div class="mt-8 pt-4 border-t border-gray-700/50">
-            <h3 class="font-semibold text-red-400 mb-2">Statut de la Plateforme</h3>
-            <!-- Version passée à Bêta -->
-            <p class="text-xs text-gray-500">Version: 1.0 (Bêta)</p>
+        <div class="mt-12 pt-4 border-t border-gray-700/50 text-center">
+            <h3 class="font-semibold text-red-400 mb-1">SHADOW STREAM OS</h3>
+            <!-- Version mise à jour -->
+            <p class="text-xs text-gray-500 font-mono tracking-wide">Version: 1.5.8.3 (Fluide)</p>
         </div>
     </div>
     <!-- Backdrop pour la sidebar, invisible tant que la sidebar est fermée -->
     <div id="sidebar-backdrop" class="hidden opacity-0" onclick="closeSidebar()"></div>
 
-    <!-- 3. Modal Container (Hidden by Default) -->
-    <div id="video-modal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4 transition-opacity duration-300 ease-in-out opacity-0" onclick="closeModal(event)">
-        
-        <!-- Modal Content (Parfaitement centré et fluide) -->
-        <div id="modal-content-area" class="glass-modal-content w-full max-w-4xl p-4 md:p-8 transform scale-95" onclick="event.stopPropagation()">
-            
-            <!-- Close Button (Super stylé) -->
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-3xl font-light leading-none transition-all duration-300 hover:text-red-500 text-gray-400 focus:outline-none z-10">
-                &times;
-            </button>
-
-            <!-- Movie Title -->
-            <h2 id="modal-title" class="text-2xl md:text-3xl font-extrabold mb-4" style="color: var(--main-red);"></h2>
-
-            <!-- Video Player (Lecteur Personnalisé Stylé) -->
-            <div class="video-container-wrap relative">
-                <div id="video-player-container" class="custom-video-player aspect-video relative group paused">
-                    <!-- controlsList="nodownload" et pas d'attribut 'controls' pour bloquer le téléchargement et utiliser les contrôles custom -->
-                    <video id="video-player" preload="metadata" poster="" class="w-full rounded-xl shadow-2xl bg-black" controlsList="nodownload">
-                        <!-- Source will be injectée ici -->
-                    </video>
-
-                    <!-- Custom Overlay/Controls (S'affiche si la vidéo est en pause ou au chargement) -->
-                    <div id="custom-controls-overlay" onclick="togglePlayPause(event)" class="absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-300 cursor-pointer">
-                        <button id="play-pause-button" class="bg-red-700 hover:bg-red-600 transition duration-150 p-5 rounded-full shadow-lg transform scale-100 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-red-500/50">
-                            <!-- Play Icon (SVG) -->
-                            <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M6 4l15 8-15 8z"/>
-                            </svg>
-                             <!-- Pause Icon (SVG - hidden initially) -->
-                            <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white hidden" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Minimalist control bar at the bottom (Fullscreen only) -->
-                    <div id="minimal-controls" class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex justify-end items-center space-x-4">
-                        <button onclick="toggleFullscreen()" class="text-white hover:text-red-500 transition duration-150 p-1 rounded-lg focus:outline-none">
-                            <!-- Fullscreen Icon (SVG) -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <p class="mt-4 text-xs text-gray-500 text-center">Design Premium. Expérience fluide garantie après le pré-chargement.</p>
-        </div>
-    </div>
 
     <script>
         // --- LOGIQUE DE SÉCURITÉ ET D'EXPULSION (S'exécute en premier) ---
@@ -391,48 +582,55 @@
         const EXPULSION_KEY = 'shadowStreamExpulsion';
         const WARNING_COUNT_KEY = 'shadowStreamWarnings';
         const EXPULSION_DURATION_MS = 5 * 60 * 60 * 1000; // 5 heures en millisecondes
-        const MAX_WARNINGS = 1; // Expulsion à la deuxième tentative (compteur > 1)
+        const MAX_WARNINGS = 3; 
 
         const mainBody = document.getElementById('main-body');
 
         /**
-         * Vérifie si l'utilisateur est banni et gère l'expulsion.
+         * Vérifie si l'utilisateur est banni et gère l'expulsion (blocage total).
          */
         function checkExpulsionStatus() {
             const expulsionTime = localStorage.getItem(EXPULSION_KEY);
             const currentTime = Date.now();
 
             if (expulsionTime && currentTime < parseInt(expulsionTime, 10)) {
-                // Utilisateur banni
                 const remainingTimeMs = parseInt(expulsionTime, 10) - currentTime;
-                // Calculer les heures restantes (arrondi au supérieur)
                 const remainingHours = Math.ceil(remainingTimeMs / (60 * 60 * 1000)); 
 
-                // Remplacer le contenu du corps par un message de blocage
+                // Blocage complet de la page
                 mainBody.innerHTML = `
-                    <div class="h-screen flex flex-col items-center justify-center text-center p-8 bg-gray-900 text-white">
-                        <h1 class="text-4xl font-bold mb-4" style="color: var(--main-red);">ACCÈS BLOQUÉ</h1>
-                        <p class="text-xl mb-6">Vous avez été expulsé du site pour violation des règles de sécurité.</p>
-                        <p class="text-lg font-medium">Temps restant estimé: ${remainingHours} heure(s).</p>
-                        <p class="mt-8 text-sm text-gray-400">Redirection automatique vers Google...</p>
+                    <div class="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center text-center p-8 z-[2000] text-white">
+                        <!-- Bloc de message animé pour le ban -->
+                        <div class="bg-red-900 p-8 rounded-2xl shadow-2xl border-4 border-red-500 animate-pulse-once max-w-lg w-full">
+                            <h1 class="text-5xl font-extrabold mb-4 text-red-300">ACCÈS INTERDIT</h1>
+                            <p class="text-xl mb-6 font-medium">
+                                Vous avez été **expulsé** du site pour violation des règles de sécurité.
+                            </p>
+                            <p class="text-2xl font-bold mb-8 text-red-200">
+                                Temps de blocage restant: ${remainingHours} heure(s).
+                            </p>
+                            <p class="text-sm text-gray-400">
+                                Le site est bloqué et va se fermer automatiquement.
+                            </p>
+                        </div>
                     </div>
                 `;
-                // Redirection fluide après un court délai
+                mainBody.style.overflow = 'hidden'; 
+                mainBody.style.pointerEvents = 'none';
+
+                // Redirection forcée
                 setTimeout(() => {
                     window.location.replace("https://www.google.com");
                 }, 3000); 
                 
-                // Stopper l'exécution du script principal
                 throw new Error("Expulsion active, arrêt du script.");
             }
-            // Si l'expulsion est terminée, réinitialiser le compteur de tentatives pour une nouvelle session
             if (expulsionTime && currentTime >= parseInt(expulsionTime, 10)) {
                  localStorage.removeItem(EXPULSION_KEY);
                  localStorage.removeItem(WARNING_COUNT_KEY);
             }
         }
         
-        // Exécuter immédiatement au début du script pour bloquer l'accès
         checkExpulsionStatus(); 
 
         // Reste des constantes et références DOM
@@ -442,42 +640,156 @@
                 id: 1,
                 title: "A contre sens 3",
                 poster: "https://image.tmdb.org/t/p/original/iNncvRAgj8SQA25OhjNZeEElWCK.jpg",
-                video_path: "A-contre-sens-3.mp4"
+                video_path: "A-contre-sens-3.mp4",
+                description: "Le troisième volet de la saga à succès. Après avoir fui le réseau, Noah et Nick doivent faire face à un ennemi qui connaît tous leurs secrets. Une course-poursuite à travers l'Europe pour la survie de leur amour. Action, drame et conséquences inattendues."
             },
             {
                 id: 2,
                 title: "Evanouis",
                 poster: "https://image.tmdb.org/t/p/original/3eRJV97oZDY6LORwPNdWlfdPLnd.jpg",
-                video_path: "Evanouis.mp4"
+                video_path: "Evanouis.mp4",
+                description: "Dans un futur proche où la mémoire peut être effacée sur commande, une femme se réveille sans aucun souvenir de son passé. Elle doit reconstituer les fragments de sa vie avant qu'un mystérieux groupe ne termine le travail. Un thriller psychologique intense."
             },
             {
                 id: 3,
                 title: "Superman",
                 poster: "https://image.tmdb.org/t/p/original/bL1U8TDb2ZiThIBFAdKHOfpv8lk.jpg",
-                video_path: "Superman-2025.mp4"
+                video_path: "Superman-2025.mp4",
+                description: "Le retour de l'Homme d'Acier dans une réinvention sombre et épique. Alors que Clark Kent essaie d'équilibrer sa vie humaine et ses responsabilités cosmiques, une menace venue des étoiles met Metropolis à genoux. Le héros devra faire face à son plus grand dilemme moral."
             }
         ];
 
         const grid = document.getElementById('movie-grid');
-        const modal = document.getElementById('video-modal');
-        const modalTitle = document.getElementById('modal-title');
+        const mainGridView = document.getElementById('main-grid-view');
+        const movieDetailView = document.getElementById('movie-detail-view');
+        const detailTitle = document.getElementById('detail-title');
+        const detailPoster = document.getElementById('detail-poster');
+        const detailDescription = document.getElementById('detail-description'); 
         const videoPlayer = document.getElementById('video-player');
-        const videoPlayerContainer = document.getElementById('video-player-container');
-        const modalContentArea = document.getElementById('modal-content-area');
+        const videoErrorMessage = document.getElementById('video-error-message'); 
+        
+        const customPlayButtonOverlay = document.getElementById('custom-play-button-overlay');
+        const playPauseIcon = document.getElementById('play-pause-icon');
+
+        const loaderOverlay = document.getElementById('loader-overlay'); 
         const mainContentWrap = document.getElementById('main-content-wrap');
         const scrollToTopBtn = document.getElementById('scrollToTopBtn'); 
         
         const sidebar = document.getElementById('sidebar');
         const sidebarBackdrop = document.getElementById('sidebar-backdrop');
         
-        const loaderOverlay = document.getElementById('loader-overlay');
-        const controlsOverlay = document.getElementById('custom-controls-overlay');
-        const playIcon = document.getElementById('play-icon');
-        const pauseIcon = document.getElementById('pause-icon');
+        const menuButton = document.getElementById('menu-button');
+        const backButton = document.getElementById('back-button');
         
-        // Nouvelles références pour la fenêtre d'avertissement de sécurité
         const securityWarningModal = document.getElementById('security-warning-modal');
         const warningMessage = document.getElementById('warning-message');
+        
+        const offlineModal = document.getElementById('offline-modal'); 
+        
+        // Références pour la recherche
+        const searchInput = document.getElementById('search-input');
+        const searchContainer = document.getElementById('search-container');
+        const noResultsMessage = document.getElementById('no-results-message');
+        const floatingSearchIcon = document.getElementById('floating-search-icon'); 
+
+        let currentView = 'grid'; 
+        let errorAttemptCount = 0; 
+        const MAX_RELOAD_ATTEMPTS = 2; 
+
+        // --- LOGIQUE HORS LIGNE ---
+
+        /**
+         * Affiche la modale 'Hors Ligne'.
+         */
+        function showOfflineModal() {
+            // Empêche le défilement du corps principal
+            mainBody.style.overflow = 'hidden'; 
+            offlineModal.classList.add('active');
+            videoPlayer.pause(); // Mettre la vidéo en pause si elle est en cours
+        }
+
+        /**
+         * Masque la modale 'Hors Ligne'.
+         */
+        function hideOfflineModal() {
+            offlineModal.classList.remove('active');
+            // Restaure le défilement du corps principal après un délai (pour la transition)
+            setTimeout(() => {
+                mainBody.style.overflow = '';
+            }, 400); 
+        }
+
+        // Écouteur pour la perte de connexion
+        window.addEventListener('offline', showOfflineModal);
+
+        // Écouteur pour le retour de la connexion
+        window.addEventListener('online', hideOfflineModal);
+
+        // Vérification initiale de l'état
+        if (!navigator.onLine) {
+            showOfflineModal();
+        }
+
+
+        // --- LOGIQUE DU LECTEUR VIDÉO ---
+        
+        /**
+         * Bascule entre Lecture et Pause pour le bouton Overlay.
+         */
+        function toggleVideoPlayPause() {
+            if (videoPlayer.paused || videoPlayer.ended) {
+                // Tente de jouer. Si le navigateur bloque l'audio, il le signale
+                videoPlayer.play().catch(e => {
+                     console.warn("Autoplay bloqué (Audio non-muet). L'utilisateur peut cliquer à nouveau.");
+                });
+            } else {
+                videoPlayer.pause();
+            }
+        }
+        
+        /**
+         * Met à jour l'icône de l'overlay (Play ou Pause)
+         */
+        function updateOverlayIcon() {
+            if (videoPlayer.paused || videoPlayer.ended) {
+                // Montrer l'icône Play (Triangle)
+                playPauseIcon.setAttribute('d', 'M6 4l15 8-15 8z');
+            } else {
+                // Montrer l'icône Pause (Deux barres)
+                playPauseIcon.setAttribute('d', 'M6 19h4V5H6zm8-14v14h4V5z');
+            }
+        }
+
+        // Écouteurs pour masquer/afficher l'overlay lors du changement d'état
+        videoPlayer.addEventListener('play', () => {
+            // Cacher l'overlay et le rendre inactif (pour les clics)
+            customPlayButtonOverlay.classList.add('opacity-0', 'pointer-events-none');
+            updateOverlayIcon();
+        });
+
+        videoPlayer.addEventListener('pause', () => {
+            // Afficher l'overlay
+            customPlayButtonOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            updateOverlayIcon();
+        });
+
+        videoPlayer.addEventListener('ended', () => {
+            // Afficher l'overlay (l'utilisateur doit re-cliquer pour relancer)
+            customPlayButtonOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            updateOverlayIcon();
+        });
+        
+        // Lors du chargement des données, vérifier l'état initial
+        videoPlayer.addEventListener('loadedmetadata', () => {
+            // Si la vidéo n'est pas en pause, cacher l'overlay (si l'autoplay a fonctionné)
+            if (!videoPlayer.paused && !videoPlayer.ended) {
+                customPlayButtonOverlay.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                // Sinon l'afficher (par défaut ou si l'autoplay a été bloqué)
+                 customPlayButtonOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            }
+            updateOverlayIcon();
+        });
 
         /**
          * Affiche un avertissement de sécurité, incrémente le compteur et expulse si la limite est atteinte.
@@ -485,36 +797,45 @@
         function triggerSecurityAction(type) {
             let warningCount = parseInt(localStorage.getItem(WARNING_COUNT_KEY) || 0, 10);
             warningCount++;
-            
-            // Logique d'EXPULSION
+            localStorage.setItem(WARNING_COUNT_KEY, warningCount.toString());
+
+            const action = type === 'keydown' ? 'raccourci clavier' : 'clic droit';
+            const warningBox = securityWarningModal.querySelector('.warning-box');
+
             if (warningCount > MAX_WARNINGS) {
                 const expulsionTime = Date.now() + EXPULSION_DURATION_MS;
                 localStorage.setItem(EXPULSION_KEY, expulsionTime.toString());
-                localStorage.setItem(WARNING_COUNT_KEY, MAX_WARNINGS + 1);
                 
-                warningMessage.textContent = "EXPULSION! Vous êtes banni pour 5 heures.";
-                securityWarningModal.classList.add('active'); // Afficher la modale
+                warningMessage.textContent = "EXPULSION DÉFINITIVE! Vous êtes banni pour 5 heures.";
+                warningBox.classList.add('bg-red-900', 'border-white', 'animate-pulse-once'); 
+                warningBox.classList.remove('animate-shake');
+                securityWarningModal.classList.add('active'); 
                 securityWarningModal.style.display = 'flex';
                 
-                // Redirection après 3 secondes (temps pour lire le message)
                 setTimeout(() => {
                     window.location.replace("https://www.google.com");
                 }, 3000); 
                 return;
             }
 
-            // PREMIER AVERTISSEMENT
-            localStorage.setItem(WARNING_COUNT_KEY, warningCount.toString());
+            const attemptsLeft = MAX_WARNINGS - warningCount + 1; 
+            const plural = attemptsLeft > 1 ? 's' : '';
+            
+            if (attemptsLeft === 1) {
+                warningMessage.textContent = `DERNIÈRE CHANCE! Arrêtez le ${action}.`;
+            } else {
+                warningMessage.textContent = `AVERTISSEMENT (${attemptsLeft} tentative${plural} restante${plural}) : ${action} non autorisé !`;
+            }
+            
+            warningBox.classList.remove('bg-red-900', 'border-white', 'animate-pulse-once'); 
+            warningBox.classList.add('animate-shake'); 
 
-            const action = type === 'keydown' ? 'raccourci clavier' : 'clic droit';
-            warningMessage.textContent = `AVERTISSEMENT #${warningCount}: Arrêtez d'utiliser le ${action} !`;
-            securityWarningModal.classList.add('active'); // Afficher la modale
+            securityWarningModal.classList.add('active'); 
             securityWarningModal.style.display = 'flex';
 
-            // Masquer l'avertissement après 3 secondes
             setTimeout(() => {
                 securityWarningModal.classList.remove('active');
-                // Masquer complètement après la transition de fade-out
+                warningBox.classList.remove('animate-shake');
                 setTimeout(() => {
                     securityWarningModal.style.display = 'none';
                 }, 300); 
@@ -531,11 +852,11 @@
         // 2. Écouteur de raccourcis clavier de sécurité
         document.addEventListener('keydown', function(e) {
             const key = e.key.toLowerCase();
-            const isDevTools = (e.key === 'F12' || e.keyCode === 123) || // F12
-                               (e.ctrlKey && e.shiftKey && key === 'i') || // Ctrl+Shift+I
-                               (e.metaKey && e.altKey && key === 'i'); // Cmd+Option+I (Mac)
+            const isDevTools = (e.key === 'F12' || e.keyCode === 123) || 
+                               (e.ctrlKey && e.shiftKey && key === 'i') || 
+                               (e.metaKey && e.altKey && key === 'i');
 
-            const isViewSource = (e.ctrlKey && key === 'u') || (e.metaKey && key === 'u'); // Ctrl+U / Cmd+U
+            const isViewSource = (e.ctrlKey && key === 'u') || (e.metaKey && key === 'u'); 
 
             if (isDevTools || isViewSource) {
                 e.preventDefault();
@@ -545,32 +866,75 @@
         });
 
 
-        // --- SCROLL-TO-TOP FUNCTIONS ---
+        // --- SCROLL-TO-TOP & FLOATING SEARCH FUNCTIONS (MISES À JOUR) ---
+        
+        // La hauteur de défilement nécessaire pour cacher la barre de recherche
+        const HIDE_THRESHOLD = 200; 
 
         /**
-         * Fait défiler la page vers le haut de manière fluide.
+         * Ramène l'utilisateur en haut de page et donne le focus à la barre de recherche.
+         * Appelé lorsque l'icône de recherche flottante est cliquée.
          */
-        function scrollToTop() {
+        function focusSearchAndScroll() {
             window.scrollTo({
                 top: 0,
-                behavior: 'smooth' // Fluidité garantie
+                behavior: 'smooth' 
             });
+            // Le délai de 350ms est une estimation pour permettre au smooth scroll de finir.
+            // Cela garantit que le focus est donné UNIQUEMENT lorsque la barre complète est réapparue.
+            setTimeout(() => {
+                searchInput.focus();
+            }, 350); 
         }
-        
+
         /**
-         * Affiche ou masque le bouton "Retour en haut" basé sur la position de défilement.
+         * Gère la visibilité du bouton ScrollToTop, de l'icône de recherche flottante 
+         * et de la barre de recherche complète.
          */
         function handleScroll() {
-            // Le bouton apparaît si on a défilé de plus de 400 pixels
-            if (window.scrollY > 400) {
+            const scrollY = window.scrollY;
+            
+            // Logique de visibilité du bouton classique ScrollToTop (Fallback)
+            if (scrollY > 400) {
                 scrollToTopBtn.classList.add('visible');
             } else {
                 scrollToTopBtn.classList.remove('visible');
             }
+
+            // Logique de la barre de recherche flottante/compacte (Seulement sur la grille)
+            if (currentView === 'grid') {
+                if (scrollY > HIDE_THRESHOLD) {
+                    // Masquer la barre de recherche complète
+                    searchContainer.style.transform = 'translateY(-100px)';
+                    searchContainer.style.opacity = '0';
+                    searchContainer.style.pointerEvents = 'none';
+                    
+                    // Afficher l'icône flottante
+                    floatingSearchIcon.classList.add('visible');
+                } else {
+                    // Afficher la barre de recherche complète (si en haut)
+                    searchContainer.style.transform = 'translateY(0)';
+                    searchContainer.style.opacity = '1';
+                    searchContainer.style.pointerEvents = 'auto';
+                    
+                    // Masquer l'icône flottante
+                    floatingSearchIcon.classList.remove('visible');
+                }
+            } else {
+                // S'assurer que l'icône flottante est toujours masquée sur la vue détail
+                floatingSearchIcon.classList.remove('visible');
+            }
         }
         
-        // Attacher l'écouteur d'événement au défilement
         window.addEventListener('scroll', handleScroll);
+        
+        // La fonction scrollToTop() standard est conservée pour le bouton de bas de page.
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' 
+            });
+        }
 
 
         // --- SIDEBAR FUNCTIONS ---
@@ -578,34 +942,166 @@
         function openSidebar() {
             sidebar.classList.add('is-open');
             sidebarBackdrop.classList.remove('hidden');
-            // Gérer la transition d'opacité du backdrop
             setTimeout(() => sidebarBackdrop.classList.remove('opacity-0'), 10);
-            mainBody.style.overflow = 'hidden'; // Bloquer le scroll
+            mainBody.style.overflow = 'hidden'; 
         }
 
         function closeSidebar() {
             sidebar.classList.remove('is-open');
             sidebarBackdrop.classList.add('opacity-0');
-            // Cacher le backdrop après la transition
             setTimeout(() => {
                 sidebarBackdrop.classList.add('hidden');
-                // Restaurer le scroll seulement si la modal vidéo est fermée
-                if (modal.classList.contains('hidden')) {
+                // Seulement restaurer le scroll si nous sommes sur la grille et PAS hors ligne
+                if (currentView === 'grid' && navigator.onLine) { 
                     mainBody.style.overflow = '';
                 }
-            }, 300);
+            }, 350); // Ajusté à 350ms pour correspondre à la transition CSS
+        }
+        
+        // --- LOGIQUE DE RECHERCHE EN TEMPS RÉEL ---
+        
+        /**
+         * Gère la recherche en temps réel et met à jour la grille de films.
+         */
+        function handleSearch() {
+            // Mettre en pause la vidéo si on commence à chercher depuis la page détail
+            if (currentView === 'detail') {
+                 navigateTo('grid');
+            }
+            
+            const query = searchInput.value.toLowerCase().trim();
+            
+            // 1. Filtrer les films
+            const filteredMovies = movies.filter(movie => 
+                movie.title.toLowerCase().includes(query)
+            );
+
+            // 2. Rendre les cartes filtrées
+            renderMovieCards(filteredMovies);
+
+            // 3. Gérer le message "Aucun résultat"
+            if (filteredMovies.length === 0 && query.length > 0) {
+                noResultsMessage.classList.remove('hidden');
+                grid.classList.add('hidden'); // Cacher la grille vide
+            } else {
+                noResultsMessage.classList.add('hidden');
+                grid.classList.remove('hidden'); // Afficher la grille
+            }
         }
 
-        // --- MOVIE GRID FUNCTIONS ---
+
+        // --- NAVIGATION ET LOGIQUE DES VUES (Pages Simulé) ---
 
         /**
-         * Renders all movie cards on the main page.
+         * Navigue entre la grille et la page de détail.
+         * @param {string} viewName - 'grid' ou 'detail'
+         * @param {number} [movieId] - ID du film (si 'detail')
          */
-        function renderMovieCards() {
-            grid.innerHTML = movies.map(movie => `
+        function navigateTo(viewName, movieId) {
+            
+            closeSidebar(); // Assurer que le menu est fermé
+            videoPlayer.pause(); // Mettre en pause lors de la navigation
+            
+            // 1. Gérer la transition
+            const hideView = viewName === 'grid' ? movieDetailView : mainGridView;
+            const showView = viewName === 'grid' ? mainGridView : movieDetailView;
+
+            // Masquer l'ancienne vue (fluidité)
+            hideView.classList.add('view-hidden');
+            mainBody.style.overflow = 'hidden'; // Lock scroll durant la transition
+            
+            // 2. Mettre à jour l'état de la page
+            currentView = viewName;
+            
+            // 3. Mettre à jour les boutons du Header et la recherche flottante
+            if (viewName === 'detail') {
+                menuButton.classList.add('hidden');
+                backButton.classList.remove('hidden');
+                floatingSearchIcon.classList.remove('visible'); // Masquer l'icône flottante en mode détail
+                
+                // Préparer la vue de détail AVANT de l'afficher
+                const movie = movies.find(m => m.id === movieId);
+                if (movie) {
+                    populateDetailPage(movie);
+                }
+            } else {
+                menuButton.classList.remove('hidden');
+                backButton.classList.add('hidden');
+                videoPlayer.src = ''; // Décharger la vidéo pour la performance
+                videoPlayer.load();
+                // Important: Réinitialiser le compteur d'erreur lors du départ
+                errorAttemptCount = 0; 
+                
+                // Effacer la recherche pour revenir à la grille complète (si non vide)
+                if(searchInput.value) {
+                    searchInput.value = '';
+                    handleSearch(); 
+                }
+            }
+
+            // 4. Afficher la nouvelle vue après un court délai (pour la transition)
+            setTimeout(() => {
+                hideView.classList.add('hidden');
+                
+                showView.classList.remove('hidden');
+                showView.classList.remove('view-hidden');
+
+                // 5. Restaurer le scroll et scroller en haut de la page
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // 6. Restaurer le scroll SEULEMENT si nous ne sommes pas hors ligne
+                if (navigator.onLine) {
+                    mainBody.style.overflow = ''; 
+                }
+            }, 400); // 400ms pour laisser la transition CSS se faire
+            
+            // Mettre à jour immédiatement l'état du scroll
+            handleScroll();
+        }
+        
+        /**
+         * Remplit la page de détail du film avec les données.
+         */
+        function populateDetailPage(movie) {
+            detailTitle.textContent = movie.title;
+            detailPoster.src = movie.poster;
+            detailPoster.onerror = function() {
+                this.onerror=null;
+                this.src='https://placehold.co/400x600/1e1e1e/888?text=Affiche+Non+Trouvée';
+            };
+            
+            // Remplir la description du film
+            detailDescription.textContent = movie.description;
+
+            // Réinitialiser le compteur d'erreurs et le message avant le chargement
+            errorAttemptCount = 0; 
+            videoErrorMessage.classList.add('hidden'); 
+
+            // Pré-charger la vidéo
+            videoPlayer.src = BASE_VIDEO_URL + movie.video_path;
+            videoPlayer.load(); 
+
+            // Tente de jouer la vidéo (non-muette). Le navigateur décidera.
+            videoPlayer.play().catch(error => {
+                // Si l'autoplay échoue (très probable car le son n'est plus coupé),
+                // on s'assure que l'overlay est visible pour que l'utilisateur clique.
+                console.warn("Autoplay bloqué (Audio non-muet). Affichage de l'overlay de lecture custom.");
+                customPlayButtonOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            });
+            
+            // Initialiser l'état de l'icône
+            updateOverlayIcon();
+        }
+
+        /**
+         * Génère les cartes de films pour la grille principale.
+         * @param {Array} list - La liste des films à afficher (filtrée ou complète).
+         */
+        function renderMovieCards(list = movies) {
+            grid.innerHTML = list.map(movie => `
                 <div class="movie-card bg-gray-800/60 shadow-lg hover:shadow-red-900/50 p-3 rounded-2xl border border-transparent hover:border-red-600/50 transition-all duration-300" 
                      data-id="${movie.id}" 
-                     onclick="showModal(${movie.id})">
+                     onclick="navigateTo('detail', ${movie.id})">
                     
                     <!-- Poster Container (Responsive) -->
                     <div class="aspect-[2/3] overflow-hidden rounded-xl">
@@ -622,128 +1118,44 @@
                 </div>
             `).join('');
         }
-
-        /**
-         * Displays the video modal with the selected movie.
-         * @param {number} movieId - The ID of the movie to play.
-         */
-        function showModal(movieId) {
-            const movie = movies.find(m => m.id === movieId);
-            if (!movie) return console.error('Movie not found:', movieId);
-            
-            // S'assurer que la sidebar est fermée avant d'ouvrir la modal
-            closeSidebar(); 
-
-            // 1. Populate Modal - Utilise BASE_VIDEO_URL et video_path
-            modalTitle.textContent = movie.title;
-            videoPlayer.src = BASE_VIDEO_URL + movie.video_path;
-            videoPlayer.poster = movie.poster;
-            videoPlayer.load(); 
-
-            // Initial state for custom controls (Paused)
-            playIcon.classList.remove('hidden');
-            pauseIcon.classList.add('hidden');
-            controlsOverlay.classList.remove('opacity-0');
-            videoPlayerContainer.classList.add('paused');
-
-            // 2. Display Modal (Super fluide transition)
-            modal.classList.remove('hidden');
-            mainBody.style.overflow = 'hidden'; // Lock scrolling
-            
-            // Trigger transition after class is removed
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modalContentArea.classList.remove('scale-95');
-            }, 10);
-        }
-
-        /**
-         * Closes the video modal and pauses the video.
-         * @param {Event} [event] - The click event (optional).
-         */
-        function closeModal(event) {
-            // Check if the click was on the backdrop, not the content area
-            if (event && event.target !== modal) return;
-            
-            // 1. Start Close Transition
-            modal.classList.add('opacity-0');
-            modalContentArea.classList.add('scale-95');
-
-            // 2. Pause Video
-            videoPlayer.pause();
-
-            // 3. Hide Modal after transition
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                // Restaurer le scroll seulement si la modal vidéo est fermée
-                if (modal.classList.contains('hidden') && !sidebar.classList.contains('is-open')) {
-                    mainBody.style.overflow = ''; 
-                }
-            }, 300); // Match CSS transition duration
-        }
-
-        /**
-         * Toggles between play and pause for the video player.
-         * @param {Event} event - The click event to stop propagation.
-         */
-        function togglePlayPause(event) {
-            // Stop click event from bubbling up and closing the modal
-            if (event) event.stopPropagation(); 
-            
-            if (videoPlayer.paused || videoPlayer.ended) {
-                videoPlayer.play();
-            } else {
-                videoPlayer.pause();
-            }
-        }
-
-        /**
-         * Toggles fullscreen mode for the video player container.
-         */
-        function toggleFullscreen() {
-            const playerContainer = videoPlayer.closest('.video-container-wrap');
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            } else if (playerContainer.requestFullscreen) {
-                playerContainer.requestFullscreen();
-            }
-        }
-
-        // --- Event Listeners pour les contrôles custom et la fluidité ---
-
-        // Mettre à jour les icônes quand la vidéo joue
-        videoPlayer.addEventListener('play', () => {
-            playIcon.classList.add('hidden');
-            pauseIcon.classList.remove('hidden');
-            controlsOverlay.classList.add('opacity-0'); // Hide play overlay
-            videoPlayerContainer.classList.remove('paused');
-        });
-
-        // Mettre à jour les icônes quand la vidéo est en pause ou finie
-        videoPlayer.addEventListener('pause', () => {
-            playIcon.classList.remove('hidden');
-            pauseIcon.classList.add('hidden');
-            controlsOverlay.classList.remove('opacity-0'); // Show play overlay
-            videoPlayerContainer.classList.add('paused');
-        });
-
-        videoPlayer.addEventListener('ended', () => {
-            playIcon.classList.remove('hidden');
-            pauseIcon.classList.add('hidden');
-            controlsOverlay.classList.remove('opacity-0');
-            videoPlayerContainer.classList.add('paused');
-        });
         
-        // --- LOGIQUE DU LOADER (6 SECONDES) ---
-        window.addEventListener('load', () => {
-            
-            // Durée de pré-chargement (6 secondes)
-            const MIN_LOAD_TIME = 6000; 
+        // --- LOGIQUE D'ERREUR ET DE RECHARGEMENT (CORRECTION) ---
+        
+        videoPlayer.addEventListener('error', (e) => {
+            console.error('Erreur de chargement vidéo détectée:', e);
 
-            // Rendre les cartes immédiatement pour le pré-chargement
-            renderMovieCards();
+            errorAttemptCount++;
+
+            if (errorAttemptCount <= MAX_RELOAD_ATTEMPTS) {
+                // Tentative de rechargement automatique pour corriger les erreurs transitoires
+                console.log(`Tentative de rechargement automatique (${errorAttemptCount}/${MAX_RELOAD_ATTEMPTS})...`);
+                videoErrorMessage.classList.add('hidden'); 
+                videoPlayer.load();
+                videoPlayer.play().catch(error => {}); // Tentative de re-lecture
+            } else {
+                // Échec après tentatives maximales, afficher l'erreur permanente
+                console.error('Échec du rechargement après tentatives maximales. Affichage du message d\'erreur permanent.');
+                videoErrorMessage.classList.remove('hidden'); 
+                customPlayButtonOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        });
+
+
+        // --- LOGIQUE DU LOADER DE DÉMARRAGE ---
+        document.addEventListener('DOMContentLoaded', () => {
             
-            // S'assurer que le contenu principal est visible après le délai
+            const MIN_LOAD_TIME = 3000; // 3 secondes minimum pour le "pré-chargement"
+
+            renderMovieCards(); // Afficher tous les films initialement
+            
+            // Initialiser les vues (la grille est visible par défaut, la détail est cachée)
+            movieDetailView.classList.add('hidden');
+            
+            // Initialiser l'état initial de la barre de recherche (visible)
+            searchContainer.style.transform = 'translateY(0)';
+            searchContainer.style.opacity = '1';
+            searchContainer.style.pointerEvents = 'auto';
+
             setTimeout(() => {
                 // 1. Cacher le loader de manière fluide
                 loaderOverlay.classList.add('opacity-0', 'pointer-events-none');
@@ -751,12 +1163,15 @@
                 // 2. Afficher le contenu principal
                 mainContentWrap.classList.remove('opacity-0');
 
-                // 3. Supprimer le loader (optionnel, après la transition de fade-out)
+                // 3. Supprimer le loader (après la transition de fade-out)
                 setTimeout(() => {
                     loaderOverlay.classList.add('hidden');
-                }, 500); // 500ms pour correspondre à la transition CSS
+                }, 500); 
 
             }, MIN_LOAD_TIME);
+            
+            // FIX/AMÉLIORATION FLUIDITÉ : Assurer que l'état du scroll est correct immédiatement au chargement
+            handleScroll();
         });
     </script>
 
